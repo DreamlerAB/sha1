@@ -26,7 +26,7 @@ int main(int argc, const char *argv[])
 {
     const string input = "abc";
 
-    SHA1 checksum;
+    sha1::SHA1 checksum;
     checksum.update(input);
     const string hash = checksum.final();
 

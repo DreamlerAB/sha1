@@ -37,7 +37,7 @@ void compare(const string &result, const string &expected)
 
 void test_standard()
 {
-    SHA1 checksum;
+    sha1::SHA1 checksum;
 
     cout << endl;
     cout << "Test:     abc" << endl;
@@ -69,7 +69,7 @@ void test_standard()
 
 void test_other()
 {
-    SHA1 checksum;
+    sha1::SHA1 checksum;
 
     cout << endl;
     cout << "Test:     No string" << endl;
@@ -87,7 +87,7 @@ void test_other()
 
     cout << endl;
     cout << "Test:     Two concurrent checksum calculations" << endl;
-    SHA1 checksum1, checksum2;
+    sha1::SHA1 checksum1, checksum2;
     checksum1.update("abc");
     compare(checksum2.final(), "da39a3ee5e6b4b0d3255bfef95601890afd80709"); /* "" */
     compare(checksum1.final(), "a9993e364706816aba3e25717850c26c9cd0d89d"); /* "abc" */
@@ -100,9 +100,8 @@ void test_other()
 
 void test_file(const string &filename)
 {
-    cout << SHA1::from_file(filename) << " *" << filename << endl;
+    cout << sha1::SHA1::from_file(filename) << " *" << filename << endl;
 }
-
 
 /*
  * main

@@ -22,6 +22,8 @@
 #include <iomanip>
 #include <fstream>
 
+namespace sha1
+{
 
 static const size_t BLOCK_INTS = 16;  /* number of 32bit integers per SHA1 block */
 static const size_t BLOCK_BYTES = BLOCK_INTS * 4;
@@ -304,4 +306,6 @@ std::string SHA1::from_file(const std::string &filename)
     SHA1 checksum;
     checksum.update(stream);
     return checksum.final();
+}
+
 }

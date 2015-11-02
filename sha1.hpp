@@ -25,7 +25,8 @@
 #include <iostream>
 #include <string>
 
-
+namespace sha1
+{
 class SHA1
 {
 public:
@@ -40,6 +41,6 @@ private:
     std::string m_buffer;
     uint64_t m_transforms;
 };
-
+}
 
 #endif /* SHA1_HPP */
