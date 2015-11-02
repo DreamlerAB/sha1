@@ -219,7 +219,7 @@ static void buffer_to_block(const std::string &buffer, uint32_t block[BLOCK_INTS
 
 SHA1::SHA1()
 {
-    reset(digest, buffer, transforms);
+    reset(m_digest, m_buffer, m_transforms);
 }
 
 
@@ -235,16 +235,16 @@ void SHA1::update(std::istream &is)
     while (true)
     {
         char sbuf[BLOCK_BYTES];
-        is.read(sbuf, BLOCK_BYTES - buffer.size());
-        buffer.append(sbuf, is.gcount());
-        if (buffer.size() != BLOCK_BYTES)
+        is.read(sbuf, BLOCK_BYTES - m_buffer.size());
+        m_buffer.append(sbuf, is.gcount());
+        if (m_buffer.size() != BLOCK_BYTES)
         {
             return;
         }
         uint32_t block[BLOCK_INTS];
-        buffer_to_block(buffer, block);
-        transform(digest, block, transforms);
-        buffer.clear();
+        buffer_to_block(m_buffer, block);
+        transform(m_digest, block, m_transforms);
+        m_buffer.clear();
     }
 }
 
@@ -256,22 +256,22 @@ void SHA1::update(std::istream &is)
 std::string SHA1::final()
 {
     /* Total number of hashed bits */
-    uint64_t total_bits = (transforms*BLOCK_BYTES + buffer.size()) * 8;
+    uint64_t total_bits = (m_transforms*BLOCK_BYTES + m_buffer.size()) * 8;
 
     /* Padding */
-    buffer += 0x80;
-    size_t orig_size = buffer.size();
-    while (buffer.size() < BLOCK_BYTES)
+    m_buffer += 0x80;
+    size_t orig_size = m_buffer.size();
+    while (m_buffer.size() < BLOCK_BYTES)
     {
-        buffer += (char)0x00;
+        m_buffer += (char)0x00;
     }
 
     uint32_t block[BLOCK_INTS];
-    buffer_to_block(buffer, block);
+    buffer_to_block(m_buffer, block);
 
     if (orig_size > BLOCK_BYTES - 8)
     {
-        transform(digest, block, transforms);
+        transform(m_digest, block, m_transforms);
         for (size_t i = 0; i < BLOCK_INTS - 2; i++)
         {
             block[i] = 0;
@@ -281,18 +281,18 @@ std::string SHA1::final()
     /* Append total_bits, split this uint64_t into two uint32_t */
     block[BLOCK_INTS - 1] = total_bits;
     block[BLOCK_INTS - 2] = (total_bits >> 32);
-    transform(digest, block, transforms);
+    transform(m_digest, block, m_transforms);
 
     /* Hex std::string */
     std::ostringstream result;
-    for (size_t i = 0; i < sizeof(digest) / sizeof(digest[0]); i++)
+    for (size_t i = 0; i < sizeof(m_digest) / sizeof(m_digest[0]); i++)
     {
         result << std::hex << std::setfill('0') << std::setw(8);
-        result << digest[i];
+        result << m_digest[i];
     }
 
     /* Reset for next run */
-    reset(digest, buffer, transforms);
+    reset(m_digest, m_buffer, m_transforms);
 
     return result.str();
 }
