@@ -224,6 +224,12 @@ SHA1::SHA1()
     reset(m_digest, m_buffer, m_transforms);
 }
 
+void SHA1::update(const char *data, size_t size)
+{
+    std::stringstream is;
+    is.write(data, size);
+    update(is);
+}
 
 void SHA1::update(const std::string &s)
 {

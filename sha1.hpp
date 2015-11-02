@@ -31,6 +31,7 @@ class SHA1
 {
 public:
     SHA1();
+    void update(const char *data, size_t size);
     void update(const std::string &s);
     void update(std::istream &is);
     std::string final();
