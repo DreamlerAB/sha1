@@ -15,6 +15,8 @@
         -- Volker Grabsch <vog@notjusthosting.com>
     Safety fixes
         -- Eugene Hopkinson <slowriot at voxelstorm dot com>
+    Add ability to run in iterative mode (peek)
+        -- John Barbero Unenge <john.barbero.unenge@gmail.com>
 */
 
 #include "sha1.hpp"
@@ -301,6 +303,53 @@ std::string SHA1::final()
 
     /* Reset for next run */
     reset(m_digest, m_buffer, m_transforms);
+
+    return result.str();
+}
+
+std::string SHA1::peek() const
+{
+    /* Total number of hashed bits */
+    uint64_t _transforms(m_transforms);
+    std::string _buffer(m_buffer);
+    uint32_t _digest[5];
+    for (size_t i(0); i < 5; ++i)
+        _digest[i] = m_digest[i];
+
+    uint64_t total_bits = (_transforms*BLOCK_BYTES + _buffer.size()) * 8;
+
+    /* Padding */
+    _buffer += 0x80;
+    size_t orig_size = _buffer.size();
+    while (_buffer.size() < BLOCK_BYTES)
+    {
+        _buffer += (char) 0x00;
+    }
+
+    uint32_t block[BLOCK_INTS];
+    buffer_to_block(_buffer, block);
+
+    if (orig_size > BLOCK_BYTES - 8)
+    {
+        transform(_digest, block, _transforms);
+        for (size_t i = 0; i < BLOCK_INTS - 2; i++)
+        {
+            block[i] = 0;
+        }
+    }
+
+    /* Append total_bits, split this uint64_t into two uint32_t */
+    block[BLOCK_INTS - 1] = total_bits;
+    block[BLOCK_INTS - 2] = (total_bits >> 32);
+    transform(_digest, block, _transforms);
+
+    /* Hex std::string */
+    std::ostringstream result;
+    for (size_t i = 0; i < sizeof(_digest) / sizeof(_digest[0]); i++)
+    {
+        result << std::hex << std::setfill('0') << std::setw(8);
+        result << _digest[i];
+    }
 
     return result.str();
 }

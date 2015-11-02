@@ -13,6 +13,8 @@
         -- Bruce Guenter <bruce@untroubled.org>
     Translation to simpler C++ Code
         -- Volker Grabsch <vog@notjusthosting.com>
+    Add ability to run in iterative mode (peek)
+        -- John Barbero Unenge <john.barbero.unenge@gmail.com>
 */
 
 #include "sha1.hpp"
@@ -42,24 +44,37 @@ void test_standard()
     cout << endl;
     cout << "Test:     abc" << endl;
     checksum.update("abc");
-    compare(checksum.final(), "a9993e364706816aba3e25717850c26c9cd0d89d");
+    {
+        std::string expected("a9993e364706816aba3e25717850c26c9cd0d89d");
+        compare(checksum.peek(), expected);
+        compare(checksum.final(), expected);
+    }
 
     cout << endl;
     cout << "Test:     abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq" << endl;
     checksum.update("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");
-    compare(checksum.final(), "84983e441c3bd26ebaae4aa1f95129e5e54670f1");
+    {
+        std::string expected("84983e441c3bd26ebaae4aa1f95129e5e54670f1");
+        compare(checksum.peek(), expected);
+        compare(checksum.final(), expected);
+    }
+
 
     cout << endl;
     cout << "Test:     A million repetitions of 'a'" << endl;
-    for (int i = 0; i < 1000000/200; ++i)
+    for (int i = 0; i < 1000000 / 200; ++i)
     {
         checksum.update("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                       );
+                        );
     }
-    compare(checksum.final(), "34aa973cd4c4daa4f61eeb2bdbad27316534016f");
+    {
+        std::string expected("34aa973cd4c4daa4f61eeb2bdbad27316534016f");
+        compare(checksum.peek(), expected);
+        compare(checksum.final(), expected);
+    }
 }
 
 
@@ -73,17 +88,29 @@ void test_other()
 
     cout << endl;
     cout << "Test:     No string" << endl;
-    compare(checksum.final(), "da39a3ee5e6b4b0d3255bfef95601890afd80709");
+    {
+        std::string expected("da39a3ee5e6b4b0d3255bfef95601890afd80709");
+        compare(checksum.peek(), expected);
+        compare(checksum.final(), expected);
+    }
 
     cout << endl;
     checksum.update("");
     cout << "Test:     Empty string" << endl;
-    compare(checksum.final(), "da39a3ee5e6b4b0d3255bfef95601890afd80709");
+    {
+        std::string expected("da39a3ee5e6b4b0d3255bfef95601890afd80709");
+        compare(checksum.peek(), expected);
+        compare(checksum.final(), expected);
+    }
 
     cout << endl;
     cout << "Test:     abcde" << endl;
     checksum.update("abcde");
-    compare(checksum.final(), "03de6c570bfe24bfc328ccd7ca46b76eadaf4334");
+    {
+        std::string expected("03de6c570bfe24bfc328ccd7ca46b76eadaf4334");
+        compare(checksum.peek(), expected);
+        compare(checksum.final(), expected);
+    }
 
     cout << endl;
     cout << "Test:     Two concurrent checksum calculations" << endl;

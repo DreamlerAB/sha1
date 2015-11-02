@@ -15,6 +15,8 @@
         -- Volker Grabsch <vog@notjusthosting.com>
     Safety fixes
         -- Eugene Hopkinson <slowriot at voxelstorm dot com>
+    Add ability to run in iterative mode (peek)
+        -- John Barbero Unenge <john.barbero.unenge@gmail.com>
 */
 
 #ifndef SHA1_HPP
@@ -35,6 +37,12 @@ public:
     void update(const std::string &s);
     void update(std::istream &is);
     std::string final();
+
+    /**
+    * Essentially the same as final, but doesn't reset the SHA1 (more expensive as it will do some copying)
+    */
+    std::string peek() const;
+
     static std::string from_file(const std::string &filename);
 
 private:
