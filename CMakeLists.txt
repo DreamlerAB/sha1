@@ -5,6 +5,10 @@ project(sha1 CXX)
 option(BUILD_TESTS OFF)
 option(BUILD_DEMO OFF)
 
+if (NOT WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif ()
+
 add_library(sha1 STATIC sha1.cpp sha1.hpp)
 
 install(TARGETS sha1
